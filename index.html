@@ -181,6 +181,35 @@
   </div>
 </template>
 
+
+<script>
+'use strict'
+
+var fireballSize = 22;
+var wizardSpeed = 3;
+var wizardWidth = 70;
+
+function getWizardHeight () {
+  return wizardWidth * 1.337;
+}
+
+function getFireballSpeed (isWindAhead) {
+  if (isWindAhead) {
+    return 5;
+  } else {
+    return 2;
+  }
+}
+
+function getWizardX (fieldWidth) {
+  return (fieldWidth - wizardWidth) / 2; 
+}
+function getWizardY (fieldHeight) {
+  return fieldHeight / 3;
+}
+
+</script>
+
 <script src="js/game.js"></script>
 
 </body>
