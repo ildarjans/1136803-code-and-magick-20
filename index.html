@@ -183,8 +183,6 @@
 
 
 <script>
-'use strict'
-
 var fireballSize = 22;
 var wizardSpeed = 3;
 var wizardWidth = 70;
@@ -194,11 +192,7 @@ function getWizardHeight () {
 }
 
 function getFireballSpeed (isWindAhead) {
-  if (isWindAhead) {
-    return 5;
-  } else {
-    return 2;
-  }
+  return isWindAhead ? 5 : 2;
 }
 
 function getWizardX (fieldWidth) {
