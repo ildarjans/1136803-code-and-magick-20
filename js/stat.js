@@ -1,13 +1,13 @@
 'use strict';
 
-var CLOUD_HEIGHT = 270;
-var CLOUD_WIDTH = 420;
-var CLOUD_OFFSETX = 100;
-var CLOUD_OFFSETY = 20;
 var BAR_BOTTOM = 250;
 var BAR_GAP = 50;
 var BAR_HEIGHT = 150;
 var BAR_WIDTH = 40;
+var CLOUD_HEIGHT = 270;
+var CLOUD_WIDTH = 420;
+var CLOUD_OFFSETX = 100;
+var CLOUD_OFFSETY = 20;
 var TEXT_GAP = 16;
 var TEXT_FONT = '16px PT mono';
 
@@ -43,7 +43,6 @@ window.renderStatistics = function (ctx, players, scores) {
   var maxScore = Math.round(Math.max.apply(null, scores));
   var minScore = Math.round(Math.min.apply(null, scores));
   var resultReports = [];
-  //Loop through input arrays, and store their data in common array 'resultReports'
   for (var i = 0; i < players.length; i++) {
     var columnHeight = Math.round((BAR_HEIGHT - 30) * ((scores[i] - minScore) / (maxScore - minScore))) + 30;
     var renderColor;
@@ -62,10 +61,3 @@ window.renderStatistics = function (ctx, players, scores) {
   writeTitle(ctx, '#303030');
   renderBarsAndTheirNamesAndScores(ctx, resultReports, '#303030');
 };
-
-
-// Максимальная высота гистограммы 150 пикселей.
-// Ширина колонки 40 пикселей.
-// Расстояние между колонками 50 пикселей.
-// Цвет колонки игрока Выrgba(255, 0, 0, 1).
-// Цвет колонок других игроков — синий, а насыщенность задаётся случайным образом.
