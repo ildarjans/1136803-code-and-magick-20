@@ -8,7 +8,7 @@ var barProperties = {
   MIN_HEIGHT: 30,
   WIDTH: 40
 };
-var statisticBackgroundProperties = {
+var backgroundProperties = {
   HEIGHT: 270,
   WIDTH: 420,
   OFFSETX: 100,
@@ -33,29 +33,29 @@ function getRandomInteger(max) {
 function renderPlayerName(ctx, obj, color) {
   ctx.textBaseline = 'middle';
   ctx.fillStyle = color;
-  ctx.fillText(obj.name, statisticBackgroundProperties.OFFSETX + barProperties.GAP * (obj.order + 1) + barProperties.WIDTH * obj.order, barProperties.BOTTOM + textProperties.GAP);
+  ctx.fillText(obj.name, backgroundProperties.OFFSETX + barProperties.GAP * (obj.order + 1) + barProperties.WIDTH * obj.order, barProperties.BOTTOM + textProperties.GAP);
 }
 
 function renderPlayerScore(ctx, obj, color) {
   ctx.textBaseline = 'middle';
   ctx.fillStyle = color;
-  ctx.fillText(obj.score, statisticBackgroundProperties.OFFSETX + barProperties.GAP * (obj.order + 1) + barProperties.WIDTH * obj.order, barProperties.BOTTOM - obj.columnHeight - textProperties.GAP);
+  ctx.fillText(obj.score, backgroundProperties.OFFSETX + barProperties.GAP * (obj.order + 1) + barProperties.WIDTH * obj.order, barProperties.BOTTOM - obj.columnHeight - textProperties.GAP);
 }
 
 function renderResultBar(ctx, obj) {
   ctx.fillStyle = obj.renderColor;
-  ctx.fillRect(statisticBackgroundProperties.OFFSETX + barProperties.GAP * (obj.order + 1) + barProperties.WIDTH * obj.order, barProperties.BOTTOM, barProperties.WIDTH, -obj.columnHeight);
+  ctx.fillRect(backgroundProperties.OFFSETX + barProperties.GAP * (obj.order + 1) + barProperties.WIDTH * obj.order, barProperties.BOTTOM, barProperties.WIDTH, -obj.columnHeight);
 }
 
 function renderStatisticBackground(ctx, x, y, color) {
   ctx.fillStyle = color;
-  ctx.fillRect(x, y, statisticBackgroundProperties.WIDTH, statisticBackgroundProperties.HEIGHT);
+  ctx.fillRect(x, y, backgroundProperties.WIDTH, backgroundProperties.HEIGHT);
 }
 
 function writeTitle(ctx, text, color, lineNumber) {
   ctx.textBaseline = 'hanging';
   ctx.fillStyle = color;
-  ctx.fillText(text, statisticBackgroundProperties.OFFSETX + textProperties.GAP * 2, statisticBackgroundProperties.OFFSETY + textProperties.GAP * lineNumber);
+  ctx.fillText(text, backgroundProperties.OFFSETX + textProperties.GAP * 2, backgroundProperties.OFFSETY + textProperties.GAP * lineNumber);
 }
 
 function getRandomBlueHSL() {
@@ -70,13 +70,19 @@ window.renderStatistics = function (ctx, players, scores) {
   var maxScore = Math.round(Math.max.apply(null, scores));
   var minScore = Math.round(Math.min.apply(null, scores));
   ctx.font = textProperties.FONT;
-  renderStatisticBackground(ctx, statisticBackgroundProperties.OFFSETX + BACKGROUND_SHADOW_OFFSET, statisticBackgroundProperties.OFFSETY + BACKGROUND_SHADOW_OFFSET, ColorEnum.SHADOW);
-  renderStatisticBackground(ctx, statisticBackgroundProperties.OFFSETX, statisticBackgroundProperties.OFFSETY, ColorEnum.WHITE);
+  renderStatisticBackground(ctx, backgroundProperties.OFFSETX + BACKGROUND_SHADOW_OFFSET, backgroundProperties.OFFSETY + BACKGROUND_SHADOW_OFFSET, ColorEnum.SHADOW);
+  renderStatisticBackground(ctx, backgroundProperties.OFFSETX, backgroundProperties.OFFSETY, ColorEnum.WHITE);
 
   for (var i = 0; i < players.length; i++) {
     var columnHeight = calcBarHeight(scores[i], minScore, maxScore, barProperties.MIN_HEIGHT);
     var renderColor = players[i] === 'Вы' ? renderColor = ColorEnum.RED : getRandomBlueHSL();
-    var player = {name: players[i], score: Math.round(scores[i]), columnHeight: columnHeight, renderColor: renderColor, order: i};
+    var player = {
+      name: players[i],
+      score: Math.round(scores[i]),
+      columnHeight: columnHeight,
+      renderColor: renderColor,
+      order: i
+    };
 
     renderResultBar(ctx, player);
     renderPlayerName(ctx, player, ColorEnum.TEXT);
