@@ -29,40 +29,41 @@ var wizardCoatColors = [
   'rgb(0, 0, 0)'
 ];
 var wizardEyesColors = ['black', 'red', 'blue', 'yellow', 'green'];
-var wizardInnerTemplateContent = document.querySelector('#similar-wizard-template')
+var similarWizardTemplate = document.querySelector('#similar-wizard-template')
                                 .content.querySelector('.setup-similar-item');
 var setup = document.querySelector('.setup');
 var setupSimilar = setup.querySelector('.setup-similar');
 var setupSimilarList = setupSimilar.querySelector('.setup-similar-list');
 
+renderSetupWindow(similarWizardTemplate, 4);
 setup.classList.remove('hidden');
-renderSetupWindow(wizardInnerTemplateContent, 4);
 setupSimilar.classList.remove('hidden');
 
-function renderSetupWindow(wizardTemplate, qty) {
-  var players = getShortRandomArray(playerNames, qty);
-  var coats = getShortRandomArray(wizardCoatColors, qty);
-  var eyes = getShortRandomArray(wizardEyesColors, qty);
+function renderSetupWindow(wizardTemplate, quantity) {
+  var players = getShuffledArray(playerNames, quantity);
+  var coats = getShuffledArray(wizardCoatColors, quantity);
+  var eyes = getShuffledArray(wizardEyesColors, quantity);
   var fullNames = concatSurnamesWithExistingNames(playerNames, players, playerSurnames);
   var documentFragment = document.createDocumentFragment();
 
-  for (var i = 0; i < qty; i++) {
+  for (var i = 0; i < quantity; i++) {
     var template = wizardTemplate.cloneNode(true);
-    renderWizardName(template, fullNames[i], 'p.setup-similar-label');
-    renderWizardColorDetail(template, coats[i], '.wizard .wizard-coat');
-    renderWizardColorDetail(template, eyes[i], '.wizard .wizard-eyes');
+    template.querySelector('p.setup-similar-label').textContent = fullNames[i];
+    template.querySelector('.wizard .wizard-coat').style.fill = coats[i];
+    template.querySelector('.wizard .wizard-eyes').style.fill = eyes[i];
     documentFragment.append(template);
   }
   setupSimilarList.append(documentFragment);
 }
 
-function getShortRandomArray(names, qty) {
-  if (names.length < qty) {
+function getShuffledArray(array, quantity) {
+  if (array.length < quantity) {
     return undefined;
   }
+  quantity = !quantity ? array.length : quantity;
   var randomNames = [];
-  while (randomNames.length < qty) {
-    var guess = names[getRandomInteger(names.length - 1)];
+  while (randomNames.length < quantity) {
+    var guess = array[getRandomInteger(array.length - 1)];
     if (randomNames.indexOf(guess) < 0) {
       randomNames.push(guess);
     }
@@ -74,14 +75,6 @@ function concatSurnamesWithExistingNames(names, shortNames, surnames) {
   return shortNames.map(function (name) {
     return name + ' ' + surnames[names.indexOf(name)];
   });
-}
-
-function renderWizardName(template, name, selector) {
-  template.querySelector(selector).textContent = name;
-}
-
-function renderWizardColorDetail(template, color, selector) {
-  template.querySelector(selector).style.fill = color;
 }
 
 function getRandomInteger(max) {
