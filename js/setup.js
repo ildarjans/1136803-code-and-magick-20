@@ -36,7 +36,7 @@ var setupSimilar = setup.querySelector('.setup-similar');
 var setupSimilarList = setupSimilar.querySelector('.setup-similar-list');
 
 renderSetupWindow(similarWizardTemplate, 4);
-setup.classList.remove('hidden');
+// setup.classList.remove('hidden');
 setupSimilar.classList.remove('hidden');
 
 function renderSetupWindow(wizardTemplate, quantity) {
@@ -64,6 +64,7 @@ function getShuffledArray(array, quantity) {
   var randomNames = [];
   while (randomNames.length < quantity) {
     var guess = array[getRandomInteger(array.length - 1)];
+
     if (randomNames.indexOf(guess) < 0) {
       randomNames.push(guess);
     }
@@ -79,4 +80,99 @@ function concatSurnamesWithExistingNames(names, shortNames, surnames) {
 
 function getRandomInteger(max) {
   return Math.floor(Math.random() * (max + 1));
+}
+
+// ######################################################
+// #####               MODULE4-TASK1                #####
+// ######################################################
+
+var ACTION_URL = 'https://javascript.pages.academy/code-and-magick';
+var fireballColors = [
+  '#ee4830',
+  '#30a8ee',
+  '#5ce6c0',
+  '#e848d5',
+  '#e6e848'
+];
+var validationOptions = {
+  MAX_LENGTH: 25,
+  MIN_LENGTH: 2
+};
+
+var setupOpenButton = document.querySelector('.setup-open');
+var setupCloseButton = setup.querySelector('.setup-close');
+var wizardCoat = setup.querySelector('.wizard .wizard-coat');
+var wizardEyes = setup.querySelector('.wizard .wizard-eyes');
+var fireballWrap = setup.querySelector('.setup-fireball-wrap');
+var fireballInputColor = fireballWrap.querySelector('input');
+var wizardForm = setup.querySelector('.setup-wizard-form');
+var usernameInput = setup.querySelector('.setup-user-name');
+
+wizardForm.action = ACTION_URL;
+usernameInput.minLength = validationOptions.MIN_LENGTH;
+
+setupCloseButton.tabIndex = 0;
+setupCloseButton.addEventListener('click', removeSetupWindowListeners);
+
+setupOpenButton.querySelector('.setup-open-icon').tabIndex = 0;
+setupOpenButton.addEventListener('click', addSetupWindowListeners);
+setupOpenButton.addEventListener('keydown', function (evt) {
+  return evt.key === 'Enter' ? addSetupWindowListeners() : null;
+});
+
+usernameInput.addEventListener('focus', function () {
+  document.removeEventListener('keydown', closeSetupEscapeHandler);
+  setupCloseButton.removeEventListener('keydown', closeSetupEnterHandler);
+
+});
+
+usernameInput.addEventListener('blur', function () {
+  document.addEventListener('keydown', closeSetupEscapeHandler);
+  setupCloseButton.addEventListener('keydown', closeSetupEnterHandler);
+});
+
+function addSetupWindowListeners() {
+  setup.classList.remove('hidden');
+  document.addEventListener('keydown', closeSetupEscapeHandler);
+  fireballWrap.addEventListener('click', setFireballColor);
+  setupCloseButton.addEventListener('keydown', closeSetupEnterHandler);
+  wizardCoat.addEventListener('click', setWizardCoatColor);
+  wizardEyes.addEventListener('click', setWizardEyesColor);
+}
+
+function removeSetupWindowListeners() {
+  setup.classList.add('hidden');
+  document.removeEventListener('keydown', closeSetupEscapeHandler);
+  fireballWrap.removeEventListener('click', setFireballColor);
+  setupCloseButton.removeEventListener('keydown', closeSetupEnterHandler);
+  wizardCoat.removeEventListener('click', setWizardCoatColor);
+  wizardEyes.removeEventListener('click', setWizardEyesColor);
+}
+
+function closeSetupEscapeHandler(evt) {
+  return evt.key === 'Escape' && !setup.classList.contains('hidden') ? removeSetupWindowListeners() : null;
+}
+
+function closeSetupEnterHandler(evt) {
+  return evt.key === 'Enter' ? removeSetupWindowListeners() : null;
+}
+
+function setWizardCoatColor() {
+  var currentFill = wizardCoat.style.fill;
+  wizardCoat.style.fill = getNextValue(wizardCoatColors, currentFill);
+}
+
+function setWizardEyesColor() {
+  var currentFill = wizardEyes.style.fill;
+  wizardEyes.style.fill = getNextValue(wizardEyesColors, currentFill);
+}
+
+function setFireballColor() {
+  var nextBgColor = getNextValue(fireballColors, fireballInputColor.value);
+  fireballWrap.style.background = nextBgColor;
+  fireballInputColor.value = nextBgColor;
+}
+
+function getNextValue(arr, current) {
+  return arr[(arr.indexOf(current) + 1) % arr.length];
 }
