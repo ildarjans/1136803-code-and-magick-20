@@ -86,7 +86,6 @@ function getRandomInteger(max) {
 // #####               MODULE4-TASK1                #####
 // ######################################################
 
-var ACTION_URL = 'https://javascript.pages.academy/code-and-magick';
 var fireballColors = [
   '#ee4830',
   '#30a8ee',
@@ -94,10 +93,6 @@ var fireballColors = [
   '#e848d5',
   '#e6e848'
 ];
-var validationOptions = {
-  MAX_LENGTH: 25,
-  MIN_LENGTH: 2
-};
 
 var setupOpenButton = document.querySelector('.setup-open');
 var setupCloseButton = setup.querySelector('.setup-close');
@@ -105,33 +100,21 @@ var wizardCoat = setup.querySelector('.wizard .wizard-coat');
 var wizardEyes = setup.querySelector('.wizard .wizard-eyes');
 var fireballWrap = setup.querySelector('.setup-fireball-wrap');
 var fireballInputColor = fireballWrap.querySelector('input');
-var wizardForm = setup.querySelector('.setup-wizard-form');
 var usernameInput = setup.querySelector('.setup-user-name');
 
-wizardForm.action = ACTION_URL;
-usernameInput.minLength = validationOptions.MIN_LENGTH;
-
-setupCloseButton.tabIndex = 0;
-setupCloseButton.addEventListener('click', removeSetupWindowListeners);
-
-setupOpenButton.querySelector('.setup-open-icon').tabIndex = 0;
-setupOpenButton.addEventListener('click', addSetupWindowListeners);
-setupOpenButton.addEventListener('keydown', function (evt) {
-  return evt.key === 'Enter' ? addSetupWindowListeners() : null;
+setupOpenButton.addEventListener('click', function () {
+  openSetupModal();
 });
 
-usernameInput.addEventListener('focus', function () {
-  document.removeEventListener('keydown', closeSetupEscapeHandler);
-  setupCloseButton.removeEventListener('keydown', closeSetupEnterHandler);
-
+setupOpenButton.addEventListener('keydown', function (event) {
+  if (event.key === 'Enter') {
+    openSetupModal();
+  }
 });
 
-usernameInput.addEventListener('blur', function () {
-  document.addEventListener('keydown', closeSetupEscapeHandler);
-  setupCloseButton.addEventListener('keydown', closeSetupEnterHandler);
-});
+setupCloseButton.addEventListener('click', closeSetupModal);
 
-function addSetupWindowListeners() {
+function openSetupModal() {
   setup.classList.remove('hidden');
   document.addEventListener('keydown', closeSetupEscapeHandler);
   fireballWrap.addEventListener('click', setFireballColor);
@@ -140,7 +123,7 @@ function addSetupWindowListeners() {
   wizardEyes.addEventListener('click', setWizardEyesColor);
 }
 
-function removeSetupWindowListeners() {
+function closeSetupModal() {
   setup.classList.add('hidden');
   document.removeEventListener('keydown', closeSetupEscapeHandler);
   fireballWrap.removeEventListener('click', setFireballColor);
@@ -149,12 +132,16 @@ function removeSetupWindowListeners() {
   wizardEyes.removeEventListener('click', setWizardEyesColor);
 }
 
-function closeSetupEscapeHandler(evt) {
-  return evt.key === 'Escape' && !setup.classList.contains('hidden') ? removeSetupWindowListeners() : null;
+function closeSetupEscapeHandler(event) {
+  if (event.key === 'Escape' && document.activeElement !== usernameInput) {
+    closeSetupModal();
+  }
 }
 
-function closeSetupEnterHandler(evt) {
-  return evt.key === 'Enter' ? removeSetupWindowListeners() : null;
+function closeSetupEnterHandler(event) {
+  if (event.key === 'Enter') {
+    closeSetupModal();
+  }
 }
 
 function setWizardCoatColor() {
@@ -168,11 +155,11 @@ function setWizardEyesColor() {
 }
 
 function setFireballColor() {
-  var nextBgColor = getNextValue(fireballColors, fireballInputColor.value);
-  fireballWrap.style.background = nextBgColor;
-  fireballInputColor.value = nextBgColor;
+  var color = getNextValue(fireballColors, fireballInputColor.value);
+  fireballWrap.style.background = color;
+  fireballInputColor.value = color;
 }
 
-function getNextValue(arr, current) {
-  return arr[(arr.indexOf(current) + 1) % arr.length];
+function getNextValue(arr, currentValue) {
+  return arr[(arr.indexOf(currentValue) + 1) % arr.length];
 }
