@@ -73,7 +73,7 @@
 
     for (var i = 0; i < players.length; i++) {
       var columnHeight = calcBarHeight(scores[i], minScore, maxScore, barProperties.MIN_HEIGHT);
-      var renderColor = players[i] === 'Вы' ? renderColor = ColorEnum.RED : getRandomBlueHSL();
+      var renderColor = players[i] === 'Вы' ? ColorEnum.RED : getRandomBlueHSL();
       var player = {
         name: players[i],
         score: Math.round(scores[i]),
