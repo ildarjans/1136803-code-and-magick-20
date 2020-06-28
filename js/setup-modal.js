@@ -6,6 +6,46 @@
   var setupCloseButton = setup.querySelector('.setup-close');
   var usernameInput = setup.querySelector('.setup-user-name');
 
+  // #######################################
+  // ######       MODULE6-TASK2       ######
+  // #######################################
+
+  var header = document.querySelector('header');
+  var formUploader = window.backend.save;
+  var setupForm = setup.querySelector('.setup-wizard-form');
+
+  setupForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    var formData = new FormData(setupForm);
+    formUploader(successHandler, errorHandler, formData);
+  });
+
+  function errorHandler(message) {
+    getPopupMessage(message);
+  }
+
+  function successHandler() {
+    closeSetupModal();
+  }
+
+  function getPopupMessage(message, delay) {
+    var htmlElement = document.createElement('div');
+    var styles = 'position: absolute; top: 50%; left: 50%;' +
+    'transform: translate(-50%, -50%); width: 75%; height: 50%;' +
+    'background: #fff; border-radius: 3px; box-shadow: 3px 3px 10px #000;' +
+    'display: flex; align-items: center; justify-content: center;' +
+    'font-size: 32px; color: #963131; z-index: 100; padding: 20px;';
+    htmlElement.style = styles;
+    htmlElement.innerText = message;
+    header.append(htmlElement);
+
+    setTimeout(function () {
+      htmlElement.remove();
+    }, delay);
+  }
+
+  // =======================================
+
   setupOpenButton.addEventListener('click', function () {
     openSetupModal();
   });
@@ -50,7 +90,8 @@
   }
 
   window.setupModal = {
-    getSetupModal: getSetupModal
+    getSetupModal: getSetupModal,
+    getPopupMessage: getPopupMessage
   };
 
 })();

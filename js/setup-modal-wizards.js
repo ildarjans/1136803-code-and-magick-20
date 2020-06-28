@@ -4,27 +4,15 @@
   var getShuffledArray = window.utilities.getShuffledArray;
   var getNextValue = window.utilities.getNextValue;
   var setup = window.setupModal.getSetupModal();
+  // #######################################
+  // ######       MODULE6-TASK2       ######
+  // #######################################
+  var getPopupMessage = window.setupModal.getPopupMessage;
+  var url = 'https://javascript.pages.academy/code-and-magick/data';
+  var wizards = null;
+  window.backend.load(successHandler, errorHandler, url);
+  // #######################################
 
-  var playerNames = [
-    'Иван',
-    'Хуан Себастьян',
-    'Мария',
-    'Кристоф',
-    'Виктор',
-    'Юлия',
-    'Люпита',
-    'Вашингтон'
-  ];
-  var playerSurnames = [
-    'да Марья',
-    'Верон',
-    'Мирабелла',
-    'Вальц',
-    'Онопко',
-    'Топольницкая',
-    'Нионго',
-    'Ирвинг'
-  ];
   var wizardCoatColors = [
     'rgb(101, 137, 164)',
     'rgb(241, 43, 107)',
@@ -41,6 +29,7 @@
     '#e6e848'
   ];
   var wizardEyesColors = ['black', 'red', 'blue', 'yellow', 'green'];
+
   var similarWizardTemplate = document.querySelector('#similar-wizard-template')
                                   .content.querySelector('.setup-similar-item');
   var setupSimilar = setup.querySelector('.setup-similar');
@@ -50,30 +39,20 @@
   var fireballWrap = setup.querySelector('.setup-fireball-wrap');
   var fireballInputColor = fireballWrap.querySelector('input');
 
-  renderSetupModalSimilarWizards(similarWizardTemplate, 4);
   setupSimilar.classList.remove('hidden');
 
   function renderSetupModalSimilarWizards(wizardTemplate, quantity) {
-    var players = getShuffledArray(playerNames, quantity);
-    var coats = getShuffledArray(wizardCoatColors, quantity);
-    var eyes = getShuffledArray(wizardEyesColors, quantity);
-    var fullNames = concatSurnamesWithExistingNames(playerNames, players, playerSurnames);
+    var wizardsShortRandom = getShuffledArray(wizards, quantity);
     var documentFragment = document.createDocumentFragment();
 
     for (var i = 0; i < quantity; i++) {
       var template = wizardTemplate.cloneNode(true);
-      template.querySelector('p.setup-similar-label').textContent = fullNames[i];
-      template.querySelector('.wizard .wizard-coat').style.fill = coats[i];
-      template.querySelector('.wizard .wizard-eyes').style.fill = eyes[i];
+      template.querySelector('p.setup-similar-label').textContent = wizardsShortRandom[i].name;
+      template.querySelector('.wizard .wizard-coat').style.fill = wizardsShortRandom[i].colorCoat;
+      template.querySelector('.wizard .wizard-eyes').style.fill = wizardsShortRandom[i].colorEyes;
       documentFragment.append(template);
     }
     setupSimilarList.append(documentFragment);
-  }
-
-  function concatSurnamesWithExistingNames(names, shortNames, surnames) {
-    return shortNames.map(function (name) {
-      return name + ' ' + surnames[names.indexOf(name)];
-    });
   }
 
   function setWizardCoatColor() {
@@ -103,6 +82,19 @@
     wizardCoat.removeEventListener('click', setWizardCoatColor);
     wizardEyes.removeEventListener('click', setWizardEyesColor);
   }
+  // #######################################
+  // ######       MODULE6-TASK2       ######
+  // #######################################
+
+  function successHandler(data) {
+    wizards = data;
+    renderSetupModalSimilarWizards(similarWizardTemplate, 4);
+  }
+
+  function errorHandler(message) {
+    getPopupMessage(message, 4000);
+  }
+  // =======================================
 
   window.setupModalWizard = {
     addWizardEventListeners: addWizardEventListeners,
