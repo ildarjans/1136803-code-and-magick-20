@@ -7,10 +7,10 @@
   // #######################################
   // ######       MODULE6-TASK2       ######
   // #######################################
-  var getPopupMessage = window.setupModal.getPopupMessage;
-  var url = 'https://javascript.pages.academy/code-and-magick/data';
+  var POPUP_FADEOUT_DELAY = 4000;
+  var renderPopupMessage = window.setupModal.renderPopupMessage;
   var wizards = null;
-  window.backend.load(successHandler, errorHandler, url);
+  window.backend.load(successHandler, errorHandler);
   // #######################################
 
   var wizardCoatColors = [
@@ -35,7 +35,9 @@
   var setupSimilar = setup.querySelector('.setup-similar');
   var setupSimilarList = setupSimilar.querySelector('.setup-similar-list');
   var wizardCoat = setup.querySelector('.wizard .wizard-coat');
+  var wizardCoatInput = setup.querySelector('.setup-wizard-appearance input[name="coat-color"]');
   var wizardEyes = setup.querySelector('.wizard .wizard-eyes');
+  var wizardEyesInput = setup.querySelector('.setup-wizard-appearance input[name="eyes-color"]');
   var fireballWrap = setup.querySelector('.setup-fireball-wrap');
   var fireballInputColor = fireballWrap.querySelector('input');
 
@@ -57,12 +59,16 @@
 
   function setWizardCoatColor() {
     var currentFill = wizardCoat.style.fill;
-    wizardCoat.style.fill = getNextValue(wizardCoatColors, currentFill);
+    var nextFill = getNextValue(wizardCoatColors, currentFill);
+    wizardCoat.style.fill = nextFill;
+    wizardCoatInput.value = nextFill;
   }
 
   function setWizardEyesColor() {
     var currentFill = wizardEyes.style.fill;
-    wizardEyes.style.fill = getNextValue(wizardEyesColors, currentFill);
+    var nextFill = getNextValue(wizardEyesColors, currentFill);
+    wizardEyes.style.fill = nextFill;
+    wizardEyesInput.value = nextFill;
   }
 
   function setFireballColor() {
@@ -92,7 +98,7 @@
   }
 
   function errorHandler(message) {
-    getPopupMessage(message, 4000);
+    renderPopupMessage(message, POPUP_FADEOUT_DELAY);
   }
   // =======================================
 

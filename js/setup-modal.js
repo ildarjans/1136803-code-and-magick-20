@@ -9,7 +9,7 @@
   // #######################################
   // ######       MODULE6-TASK2       ######
   // #######################################
-
+  var POPUP_FADEOUT_DELAY = 4000;
   var header = document.querySelector('header');
   var formUploader = window.backend.save;
   var setupForm = setup.querySelector('.setup-wizard-form');
@@ -21,14 +21,14 @@
   });
 
   function errorHandler(message) {
-    getPopupMessage(message);
+    renderPopupMessage(message, POPUP_FADEOUT_DELAY);
   }
 
   function successHandler() {
     closeSetupModal();
   }
 
-  function getPopupMessage(message, delay) {
+  function renderPopupMessage(message, delay) {
     var htmlElement = document.createElement('div');
     var styles = 'position: absolute; top: 50%; left: 50%;' +
     'transform: translate(-50%, -50%); width: 75%; height: 50%;' +
@@ -91,7 +91,7 @@
 
   window.setupModal = {
     getSetupModal: getSetupModal,
-    getPopupMessage: getPopupMessage
+    renderPopupMessage: renderPopupMessage
   };
 
 })();
