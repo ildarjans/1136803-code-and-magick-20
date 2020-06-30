@@ -1,9 +1,7 @@
 'use strict';
 
 (function () {
-  var TIMEOUT_IN_MS = 10000;
-  var LOAD_URL = 'https://javascript.pages.academy/code-and-magick/data';
-  var UPLOAD_URL = 'https://javascript.pages.academy/code-and-magick';
+  var TIMEOUT = 10000;
   var errorMessages = {
     statusError: function (xhr) {
       return 'Код ошибки ' + xhr.status + ', ' + xhr.statusText +
@@ -13,55 +11,55 @@
     timeoutExpired: 'Время ожидания запроса истекло.\n\nПовторите попытку позже.',
   };
 
-  function loadHandler(successHandler, errorHandler) {
+  function createXHR(url, successCallback, errorCallback) {
     var xhr = new XMLHttpRequest();
-    xhr.timeout = TIMEOUT_IN_MS;
+    xhr.timeout = TIMEOUT;
     xhr.responseType = 'json';
-    xhr.open('GET', LOAD_URL);
+    xhr.open('GET', url);
     xhr.send();
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
-        successHandler(xhr.response);
+        successCallback(xhr.response);
       } else {
-        errorHandler(errorMessages.statusError(xhr));
+        errorCallback(errorMessages.statusError(xhr));
       }
     });
 
     xhr.addEventListener('error', function () {
-      errorHandler(errorMessages.unknownError);
+      errorCallback(errorMessages.unknownError);
     });
 
     xhr.addEventListener('timeout', function () {
-      errorHandler(errorMessages.timeoutExpired);
+      errorCallback(errorMessages.timeoutExpired);
     });
   }
 
-  function uploadHandler(successHandler, errorHandler, formData) {
+  function uploadXHR(url, successCallback, errorCallback, formData) {
     var xhr = new XMLHttpRequest();
-    xhr.timeout = TIMEOUT_IN_MS;
-    xhr.open('POST', UPLOAD_URL);
+    xhr.timeout = TIMEOUT;
+    xhr.open('POST', url);
     xhr.send(formData);
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
-        successHandler(JSON.parse(xhr.response));
+        successCallback(JSON.parse(xhr.response));
       } else {
-        errorHandler(errorMessages.statusError(xhr));
+        errorCallback(errorMessages.statusError(xhr));
       }
     });
 
     xhr.addEventListener('error', function () {
-      errorHandler(errorMessages.unknownError);
+      errorCallback(errorMessages.unknownError);
     });
 
     xhr.addEventListener('timeout', function () {
-      errorHandler(errorMessages.timeoutExpired);
+      errorCallback(errorMessages.timeoutExpired);
     });
   }
 
-  window.backend = {
-    load: loadHandler,
-    save: uploadHandler
+  window.ajax = {
+    load: createXHR,
+    save: uploadXHR
   };
 
 })();

@@ -9,22 +9,24 @@
   // #######################################
   // ######       MODULE6-TASK2       ######
   // #######################################
+
   var POPUP_FADEOUT_DELAY = 4000;
+  var url = 'https://javascript.pages.academy/code-and-magick';
   var header = document.querySelector('header');
-  var formUploader = window.backend.save;
+  var formUploader = window.ajax.save;
   var setupForm = setup.querySelector('.setup-wizard-form');
 
   setupForm.addEventListener('submit', function (event) {
     event.preventDefault();
     var formData = new FormData(setupForm);
-    formUploader(successHandler, errorHandler, formData);
+    formUploader(url, successCallback, errorCallback, formData);
   });
 
-  function errorHandler(message) {
+  function errorCallback(message) {
     renderPopupMessage(message, POPUP_FADEOUT_DELAY);
   }
 
-  function successHandler() {
+  function successCallback() {
     closeSetupModal();
   }
 

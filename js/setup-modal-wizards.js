@@ -7,11 +7,15 @@
   // #######################################
   // ######       MODULE6-TASK2       ######
   // #######################################
+
   var POPUP_FADEOUT_DELAY = 4000;
+  var url = 'https://javascript.pages.academy/code-and-magick/data';
   var renderPopupMessage = window.setupModal.renderPopupMessage;
+  var wizardsLoader = window.ajax.load;
   var wizards = null;
-  window.backend.load(successHandler, errorHandler);
-  // #######################################
+  wizardsLoader(url, successCallback, errorCallback);
+
+  // =======================================
 
   var wizardCoatColors = [
     'rgb(101, 137, 164)',
@@ -92,12 +96,12 @@
   // ######       MODULE6-TASK2       ######
   // #######################################
 
-  function successHandler(data) {
+  function successCallback(data) {
     wizards = data;
     renderSetupModalSimilarWizards(similarWizardTemplate, 4);
   }
 
-  function errorHandler(message) {
+  function errorCallback(message) {
     renderPopupMessage(message, POPUP_FADEOUT_DELAY);
   }
   // =======================================
