@@ -1,21 +1,14 @@
 'use strict';
 
 (function () {
+  var POPUP_FADEOUT_DELAY = 4000;
+  var URL = 'https://javascript.pages.academy/code-and-magick/data';
+
   var getShuffledArray = window.utilities.getShuffledArray;
   var getNextValue = window.utilities.getNextValue;
   var setup = window.setupModal.getSetupModal();
-  // #######################################
-  // ######       MODULE6-TASK2       ######
-  // #######################################
-
-  var POPUP_FADEOUT_DELAY = 4000;
-  var url = 'https://javascript.pages.academy/code-and-magick/data';
   var renderPopupMessage = window.setupModal.renderPopupMessage;
   var wizardsLoader = window.ajax.load;
-  var wizards = null;
-  wizardsLoader(url, successCallback, errorCallback);
-
-  // =======================================
 
   var wizardCoatColors = [
     'rgb(101, 137, 164)',
@@ -34,6 +27,7 @@
   ];
   var wizardEyesColors = ['black', 'red', 'blue', 'yellow', 'green'];
 
+  var header = document.querySelector('header');
   var similarWizardTemplate = document.querySelector('#similar-wizard-template')
                                   .content.querySelector('.setup-similar-item');
   var setupSimilar = setup.querySelector('.setup-similar');
@@ -45,7 +39,8 @@
   var fireballWrap = setup.querySelector('.setup-fireball-wrap');
   var fireballInputColor = fireballWrap.querySelector('input');
 
-  setupSimilar.classList.remove('hidden');
+  var wizards = null;
+  wizardsLoader(URL, successCallback, errorCallback);
 
   function renderSetupModalSimilarWizards(wizardTemplate, quantity) {
     var wizardsShortRandom = getShuffledArray(wizards, quantity);
@@ -92,9 +87,6 @@
     wizardCoat.removeEventListener('click', setWizardCoatColor);
     wizardEyes.removeEventListener('click', setWizardEyesColor);
   }
-  // #######################################
-  // ######       MODULE6-TASK2       ######
-  // #######################################
 
   function successCallback(data) {
     wizards = data;
@@ -102,9 +94,8 @@
   }
 
   function errorCallback(message) {
-    renderPopupMessage(message, POPUP_FADEOUT_DELAY);
+    renderPopupMessage(header, message, POPUP_FADEOUT_DELAY);
   }
-  // =======================================
 
   window.setupModalWizard = {
     addWizardEventListeners: addWizardEventListeners,
