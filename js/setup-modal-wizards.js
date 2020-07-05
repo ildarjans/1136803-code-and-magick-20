@@ -1,14 +1,11 @@
 'use strict';
 
 (function () {
-  var POPUP_FADEOUT_DELAY = 4000;
-  var URL = 'https://javascript.pages.academy/code-and-magick/data';
+  var WIZARDS_LOAD_URL = 'https://javascript.pages.academy/code-and-magick/data';
 
   var getShuffledArray = window.utilities.getShuffledArray;
   var getNextValue = window.utilities.getNextValue;
   var setup = window.setupModal.getSetupModal();
-  var renderPopupMessage = window.setupModal.renderPopupMessage;
-  var wizardsLoader = window.ajax.load;
 
   var wizardCoatColors = [
     'rgb(101, 137, 164)',
@@ -27,7 +24,6 @@
   ];
   var wizardEyesColors = ['black', 'red', 'blue', 'yellow', 'green'];
 
-  var header = document.querySelector('header');
   var similarWizardTemplate = document.querySelector('#similar-wizard-template')
                                   .content.querySelector('.setup-similar-item');
   var setupSimilar = setup.querySelector('.setup-similar');
@@ -40,7 +36,7 @@
   var fireballInputColor = fireballWrap.querySelector('input');
 
   var wizards = null;
-  wizardsLoader(URL, successCallback, errorCallback);
+  window.ajax.load(WIZARDS_LOAD_URL, successCallback, errorCallback);
 
   function renderSetupModalSimilarWizards(wizardTemplate, quantity) {
     var wizardsShortRandom = getShuffledArray(wizards, quantity);
@@ -94,7 +90,8 @@
   }
 
   function errorCallback(message) {
-    renderPopupMessage(header, message, POPUP_FADEOUT_DELAY);
+    window.popupMessage.insertText(message);
+    window.popupMessage.show(5000);
   }
 
   window.setupModalWizard = {

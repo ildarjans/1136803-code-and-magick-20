@@ -1,13 +1,8 @@
 'use strict';
 
 (function () {
-  var POPUP_FADEOUT_DELAY = 4000;
-  var URL = 'https://javascript.pages.academy/code-and-magick';
+  var WIZARD_UPLOAD_URL = 'https://javascript.pages.academy/code-and-magick';
 
-  var formUploader = window.ajax.save;
-  var renderPopupMessage = window.popupMessage.renderPopupMessage;
-
-  var header = document.querySelector('header');
   var setup = document.querySelector('.setup');
   var setupSimilar = document.querySelector('.setup-similar');
   var setupOpenButton = document.querySelector('.setup-open');
@@ -18,7 +13,7 @@
   setupForm.addEventListener('submit', function (event) {
     event.preventDefault();
     var formData = new FormData(setupForm);
-    formUploader(URL, successCallback, errorCallback, formData);
+    window.ajax.upload(WIZARD_UPLOAD_URL, successCallback, errorCallback, formData);
   });
 
   setupOpenButton.addEventListener('click', function () {
@@ -34,7 +29,8 @@
   setupCloseButton.addEventListener('click', closeSetupModal);
 
   function errorCallback(message) {
-    renderPopupMessage(header, message, POPUP_FADEOUT_DELAY);
+    window.popupMessage.insertText(message);
+    window.popupMessage.show();
   }
 
   function successCallback() {
@@ -76,7 +72,6 @@
 
   window.setupModal = {
     getSetupModal: getSetupModal,
-    renderPopupMessage: renderPopupMessage
   };
 
 })();
