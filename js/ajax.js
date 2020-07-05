@@ -59,7 +59,7 @@
 
   window.ajax = {
     load: createXHR,
-    save: uploadXHR
+    upload: uploadXHR
   };
 
 })();
