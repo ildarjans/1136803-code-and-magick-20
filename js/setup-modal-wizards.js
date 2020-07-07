@@ -1,30 +1,12 @@
 'use strict';
 
 (function () {
+  var WIZARDS_LOAD_URL = 'https://javascript.pages.academy/code-and-magick/data';
+
   var getShuffledArray = window.utilities.getShuffledArray;
   var getNextValue = window.utilities.getNextValue;
   var setup = window.setupModal.getSetupModal();
 
-  var playerNames = [
-    'Иван',
-    'Хуан Себастьян',
-    'Мария',
-    'Кристоф',
-    'Виктор',
-    'Юлия',
-    'Люпита',
-    'Вашингтон'
-  ];
-  var playerSurnames = [
-    'да Марья',
-    'Верон',
-    'Мирабелла',
-    'Вальц',
-    'Онопко',
-    'Топольницкая',
-    'Нионго',
-    'Ирвинг'
-  ];
   var wizardCoatColors = [
     'rgb(101, 137, 164)',
     'rgb(241, 43, 107)',
@@ -41,49 +23,47 @@
     '#e6e848'
   ];
   var wizardEyesColors = ['black', 'red', 'blue', 'yellow', 'green'];
+
   var similarWizardTemplate = document.querySelector('#similar-wizard-template')
                                   .content.querySelector('.setup-similar-item');
   var setupSimilar = setup.querySelector('.setup-similar');
   var setupSimilarList = setupSimilar.querySelector('.setup-similar-list');
   var wizardCoat = setup.querySelector('.wizard .wizard-coat');
+  var wizardCoatInput = setup.querySelector('.setup-wizard-appearance input[name="coat-color"]');
   var wizardEyes = setup.querySelector('.wizard .wizard-eyes');
+  var wizardEyesInput = setup.querySelector('.setup-wizard-appearance input[name="eyes-color"]');
   var fireballWrap = setup.querySelector('.setup-fireball-wrap');
   var fireballInputColor = fireballWrap.querySelector('input');
 
-  renderSetupModalSimilarWizards(similarWizardTemplate, 4);
-  setupSimilar.classList.remove('hidden');
+  var wizards = null;
+  window.ajax.load(WIZARDS_LOAD_URL, successCallback, errorCallback);
 
   function renderSetupModalSimilarWizards(wizardTemplate, quantity) {
-    var players = getShuffledArray(playerNames, quantity);
-    var coats = getShuffledArray(wizardCoatColors, quantity);
-    var eyes = getShuffledArray(wizardEyesColors, quantity);
-    var fullNames = concatSurnamesWithExistingNames(playerNames, players, playerSurnames);
+    var wizardsShortRandom = getShuffledArray(wizards, quantity);
     var documentFragment = document.createDocumentFragment();
 
     for (var i = 0; i < quantity; i++) {
       var template = wizardTemplate.cloneNode(true);
-      template.querySelector('p.setup-similar-label').textContent = fullNames[i];
-      template.querySelector('.wizard .wizard-coat').style.fill = coats[i];
-      template.querySelector('.wizard .wizard-eyes').style.fill = eyes[i];
+      template.querySelector('p.setup-similar-label').textContent = wizardsShortRandom[i].name;
+      template.querySelector('.wizard .wizard-coat').style.fill = wizardsShortRandom[i].colorCoat;
+      template.querySelector('.wizard .wizard-eyes').style.fill = wizardsShortRandom[i].colorEyes;
       documentFragment.append(template);
     }
     setupSimilarList.append(documentFragment);
   }
 
-  function concatSurnamesWithExistingNames(names, shortNames, surnames) {
-    return shortNames.map(function (name) {
-      return name + ' ' + surnames[names.indexOf(name)];
-    });
-  }
-
   function setWizardCoatColor() {
     var currentFill = wizardCoat.style.fill;
-    wizardCoat.style.fill = getNextValue(wizardCoatColors, currentFill);
+    var nextFill = getNextValue(wizardCoatColors, currentFill);
+    wizardCoat.style.fill = nextFill;
+    wizardCoatInput.value = nextFill;
   }
 
   function setWizardEyesColor() {
     var currentFill = wizardEyes.style.fill;
-    wizardEyes.style.fill = getNextValue(wizardEyesColors, currentFill);
+    var nextFill = getNextValue(wizardEyesColors, currentFill);
+    wizardEyes.style.fill = nextFill;
+    wizardEyesInput.value = nextFill;
   }
 
   function setFireballColor() {
@@ -102,6 +82,16 @@
     fireballWrap.removeEventListener('click', setFireballColor);
     wizardCoat.removeEventListener('click', setWizardCoatColor);
     wizardEyes.removeEventListener('click', setWizardEyesColor);
+  }
+
+  function successCallback(data) {
+    wizards = data;
+    renderSetupModalSimilarWizards(similarWizardTemplate, 4);
+  }
+
+  function errorCallback(message) {
+    window.popupMessage.insertText(message);
+    window.popupMessage.show(5000);
   }
 
   window.setupModalWizard = {
