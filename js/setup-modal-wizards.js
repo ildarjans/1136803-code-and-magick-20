@@ -2,6 +2,12 @@
 
 (function () {
   var WIZARDS_LOAD_URL = 'https://javascript.pages.academy/code-and-magick/data';
+  var WIZARDSLIST_CAPACITY = 4;
+  var DEBOUNCE_DELAY = 500;
+  var MATCHING_AWARD = {
+    COAT: 2,
+    EYES: 1
+  };
 
   var getShuffledArray = window.utilities.getShuffledArray;
   var getNextValue = window.utilities.getNextValue;
@@ -26,8 +32,7 @@
 
   var similarWizardTemplate = document.querySelector('#similar-wizard-template')
                                   .content.querySelector('.setup-similar-item');
-  var setupSimilar = setup.querySelector('.setup-similar');
-  var setupSimilarList = setupSimilar.querySelector('.setup-similar-list');
+  var setupSimilarList = document.querySelector('.setup-similar-list');
   var wizardCoat = setup.querySelector('.wizard .wizard-coat');
   var wizardCoatInput = setup.querySelector('.setup-wizard-appearance input[name="coat-color"]');
   var wizardEyes = setup.querySelector('.wizard .wizard-eyes');
@@ -38,15 +43,14 @@
   var wizards = null;
   window.ajax.load(WIZARDS_LOAD_URL, successCallback, errorCallback);
 
-  function renderSetupModalSimilarWizards(wizardTemplate, quantity) {
-    var wizardsShortRandom = getShuffledArray(wizards, quantity);
+  function renderSetupModalSimilarWizards(wizardsShortArray, wizardTemplate) {
     var documentFragment = document.createDocumentFragment();
 
-    for (var i = 0; i < quantity; i++) {
+    for (var i = 0; i < wizardsShortArray.length; i++) {
       var template = wizardTemplate.cloneNode(true);
-      template.querySelector('p.setup-similar-label').textContent = wizardsShortRandom[i].name;
-      template.querySelector('.wizard .wizard-coat').style.fill = wizardsShortRandom[i].colorCoat;
-      template.querySelector('.wizard .wizard-eyes').style.fill = wizardsShortRandom[i].colorEyes;
+      template.querySelector('p.setup-similar-label').textContent = wizardsShortArray[i].name;
+      template.querySelector('.wizard .wizard-coat').style.fill = wizardsShortArray[i].colorCoat;
+      template.querySelector('.wizard .wizard-eyes').style.fill = wizardsShortArray[i].colorEyes;
       documentFragment.append(template);
     }
     setupSimilarList.append(documentFragment);
@@ -57,6 +61,7 @@
     var nextFill = getNextValue(wizardCoatColors, currentFill);
     wizardCoat.style.fill = nextFill;
     wizardCoatInput.value = nextFill;
+    window.utilities.debounce(updateSimilarWizards, DEBOUNCE_DELAY);
   }
 
   function setWizardEyesColor() {
@@ -64,6 +69,7 @@
     var nextFill = getNextValue(wizardEyesColors, currentFill);
     wizardEyes.style.fill = nextFill;
     wizardEyesInput.value = nextFill;
+    window.utilities.debounce(updateSimilarWizards, DEBOUNCE_DELAY);
   }
 
   function setFireballColor() {
@@ -86,12 +92,42 @@
 
   function successCallback(data) {
     wizards = data;
-    renderSetupModalSimilarWizards(similarWizardTemplate, 4);
+    var wizardsShortRandom = getShuffledArray(wizards, 4);
+    renderSetupModalSimilarWizards(wizardsShortRandom, similarWizardTemplate);
   }
 
   function errorCallback(message) {
-    window.popupMessage.insertText(message);
-    window.popupMessage.show(5000);
+    window.popupMessage.show(message);
+  }
+
+  function getWizardColors() {
+    return {
+      coat: wizardCoat.style.fill,
+      eyes: wizardEyes.style.fill
+    };
+  }
+
+  function getSimilarWizardsArray(length) {
+    var colors = getWizardColors();
+    wizards.forEach(function (wizard) {
+      wizard.award = 0;
+      wizard.award = wizard.colorEyes === colors.eyes ? wizard.award + MATCHING_AWARD.EYES : wizard.award;
+      wizard.award = wizard.colorCoat === colors.coat ? wizard.award + MATCHING_AWARD.COAT : wizard.award;
+    });
+    wizards.sort(function (current, next) {
+      return current.award > next.award ? -1 : 1;
+    });
+    return wizards.slice(0, length);
+  }
+
+  function updateSimilarWizards() {
+    var currentWizardsItems = setupSimilarList.querySelectorAll('.setup-similar-item');
+    currentWizardsItems.forEach(function (wizard) {
+      wizard.remove();
+    });
+    var shortWizards = getSimilarWizardsArray(WIZARDSLIST_CAPACITY);
+    renderSetupModalSimilarWizards(shortWizards, similarWizardTemplate);
+
   }
 
   window.setupModalWizard = {
