@@ -31,7 +31,7 @@
     return function () {
       clearTimeout(timeout);
       timeout = setTimeout(fn, delay);
-    }();
+    };
   }
 
 

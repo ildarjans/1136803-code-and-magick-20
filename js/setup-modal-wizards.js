@@ -3,7 +3,7 @@
 (function () {
   var WIZARDS_LOAD_URL = 'https://javascript.pages.academy/code-and-magick/data';
   var WIZARDSLIST_CAPACITY = 4;
-  var DEBOUNCE_DELAY = 500;
+  var DEBOUNCE_DELAY = 5000;
   var MATCHING_AWARD = {
     COAT: 2,
     EYES: 1
@@ -11,6 +11,7 @@
 
   var getShuffledArray = window.utilities.getShuffledArray;
   var getNextValue = window.utilities.getNextValue;
+  var debouncedUpdateWizards = window.utilities.debounce(updateSimilarWizards, DEBOUNCE_DELAY);
   var setup = window.setupModal.getSetupModal();
 
   var wizardCoatColors = [
@@ -61,7 +62,7 @@
     var nextFill = getNextValue(wizardCoatColors, currentFill);
     wizardCoat.style.fill = nextFill;
     wizardCoatInput.value = nextFill;
-    window.utilities.debounce(updateSimilarWizards, DEBOUNCE_DELAY);
+    debouncedUpdateWizards();
   }
 
   function setWizardEyesColor() {
@@ -69,7 +70,7 @@
     var nextFill = getNextValue(wizardEyesColors, currentFill);
     wizardEyes.style.fill = nextFill;
     wizardEyesInput.value = nextFill;
-    window.utilities.debounce(updateSimilarWizards, DEBOUNCE_DELAY);
+    debouncedUpdateWizards();
   }
 
   function setFireballColor() {
